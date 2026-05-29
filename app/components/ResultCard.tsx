@@ -15,6 +15,16 @@ interface Props {
   onReplace: (id: string, replacement: Recommendation) => void;
 }
 
+/** Muted clothbound-cover colours for books with no cover image. */
+const CLOTH = ["#7c3a2f", "#5b463a", "#4f5535", "#3f5550", "#8a6d3b", "#5a3f50"];
+
+/** Pick a stable cloth colour from the title, so the same book always matches. */
+function clothColor(title: string): string {
+  let h = 0;
+  for (let i = 0; i < title.length; i++) h = (h * 31 + title.charCodeAt(i)) >>> 0;
+  return CLOTH[h % CLOTH.length];
+}
+
 export default function ResultCard({
   rec,
   emotion,
@@ -29,6 +39,8 @@ export default function ResultCard({
   const [expanded, setExpanded] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Tracks a cover image that failed to load, so we fall back to the cloth cover.
+  const [imgFailed, setImgFailed] = useState(false);
 
   async function handleNotForMe() {
     setSwapping(true);
@@ -92,24 +104,23 @@ export default function ResultCard({
 
   return (
     <article className={`card${swapping ? " swapping" : ""}`}>
-      {rec.coverUrl ? (
+      {rec.coverUrl && !imgFailed ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           className="cover"
           src={rec.coverUrl}
           alt={`Cover of ${rec.title}`}
-          onError={(e) => {
-            // If Open Library returns a broken/blank cover, fall back cleanly.
-            const el = e.currentTarget;
-            el.style.display = "none";
-            el.insertAdjacentHTML(
-              "afterend",
-              `<div class="cover-placeholder">${copy.noCoverLabel}</div>`
-            );
-          }}
+          // If Open Library returns a broken/blank cover, fall back to the cloth cover.
+          onError={() => setImgFailed(true)}
         />
       ) : (
-        <div className="cover-placeholder">{copy.noCoverLabel}</div>
+        <div
+          className="cover-placeholder"
+          style={{ background: clothColor(rec.title) }}
+        >
+          <span className="ph-title">{rec.title}</span>
+          <span className="ph-author">{rec.author}</span>
+        </div>
       )}
 
       <div>

@@ -9,6 +9,7 @@
   --accent: #8a3324; /* deep brick red, like a clothbound spine */
   --accent-soft: #b07a5f;
   --placeholder-bg: #efe7d8;
+  --fold: #e3d6bd; /* the darker underside of a folded page corner */
 
   --font-serif: Georgia, "Times New Roman", serif;
   --font-sans: system-ui, -apple-system, sans-serif;
@@ -100,27 +101,29 @@ body {
 }
 
 .chip {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  font-weight: 500;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
   color: var(--ink);
-  background: var(--bg-card);
+  background: transparent;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 13px 12px;
+  border-radius: 4px;
+  padding: 14px 12px;
   cursor: pointer;
-  transition: border-color 0.18s ease, background 0.18s ease,
-    transform 0.18s ease;
+  transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 
 .chip:hover {
-  border-color: var(--accent-soft);
+  border-color: var(--ink-faint);
+  background: var(--bg-card);
 }
 
+/* Selected mood reads like an ink stamp — distinct from the red action button. */
 .chip[aria-pressed="true"] {
-  border-color: var(--accent);
-  background: #fff;
-  color: var(--accent);
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
 }
 
 /* ---------- Prompt reveal ---------- */
@@ -141,19 +144,21 @@ body {
 
 .prompt {
   text-align: left;
-  font-family: var(--font-sans);
-  font-size: 15px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 16px;
   color: var(--ink-soft);
   background: transparent;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-  padding: 11px 14px;
+  border: 1px solid transparent;
+  border-left: 2px solid var(--line);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 9px 14px;
   cursor: pointer;
   transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
 }
 
 .prompt:hover {
-  border-color: var(--accent-soft);
+  border-left-color: var(--accent);
   color: var(--ink);
   background: var(--bg-card);
 }
@@ -276,14 +281,43 @@ body {
 }
 
 .card {
+  position: relative;
   display: grid;
-  grid-template-columns: 92px 1fr;
-  gap: 16px;
+  grid-template-columns: 104px 1fr;
+  gap: 18px;
   background: var(--bg-card);
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 18px;
+  border-top-right-radius: 0; /* squared off where the page is folded */
+  padding: 20px 22px;
   animation: rise 0.4s ease both;
+}
+
+/* The dogear: the top-right corner of the page, turned down. */
+.card::before {
+  /* the notch where the corner used to be — shows the page behind */
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 26px;
+  height: 26px;
+  background: var(--bg);
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+.card::after {
+  /* the folded flap — the slightly darker underside of the page */
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 26px;
+  height: 26px;
+  background: var(--fold);
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+  box-shadow: inset 2px 2px 2px rgba(37, 32, 26, 0.09);
+  border-bottom-left-radius: 2px;
 }
 
 @keyframes rise {
@@ -303,49 +337,73 @@ body {
 }
 
 .cover {
-  width: 92px;
-  height: 138px;
+  width: 104px;
+  height: 156px;
   object-fit: cover;
-  border-radius: 3px;
+  border-radius: 2px;
   background: var(--placeholder-bg);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(37, 32, 26, 0.12);
+  /* a gentle, modern two-layer lift — like a book sitting on a shelf */
+  box-shadow: 0 3px 10px rgba(37, 32, 26, 0.16), 0 1px 2px rgba(37, 32, 26, 0.12);
 }
 
+/* A miss becomes a feature: a blank clothbound hardback with the title set on it. */
 .cover-placeholder {
-  width: 92px;
-  height: 138px;
-  border-radius: 3px;
-  background: var(--placeholder-bg);
-  border: 1px solid var(--line);
+  width: 104px;
+  height: 156px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  box-shadow: 0 3px 10px rgba(37, 32, 26, 0.16), 0 1px 2px rgba(37, 32, 26, 0.12);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 14px 10px;
+  color: #f4ecdb;
+  /* background (cloth colour) is set per book in the component */
+}
+
+.ph-title {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 12px;
-  color: var(--ink-faint);
-  padding: 6px;
+  font-size: 13px;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ph-author {
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 8px;
+  opacity: 0.78;
 }
 
 .card-title {
   font-family: var(--font-serif);
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 500;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.18;
 }
 
 .card-author {
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   color: var(--ink-faint);
-  margin: 3px 0 0;
+  margin: 5px 0 0;
 }
 
 .card-pitch {
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1.6;
   color: var(--ink-soft);
-  margin: 11px 0 0;
+  margin: 13px 0 0;
 }
 
 .content-note {
@@ -409,12 +467,13 @@ body {
 /* full-card pitch when there's no cover column collapse on tiny screens */
 @media (max-width: 380px) {
   .card {
-    grid-template-columns: 76px 1fr;
-    gap: 13px;
+    grid-template-columns: 88px 1fr;
+    gap: 14px;
+    padding: 16px 18px;
   }
   .cover,
   .cover-placeholder {
-    width: 76px;
-    height: 114px;
+    width: 88px;
+    height: 132px;
   }
 }
