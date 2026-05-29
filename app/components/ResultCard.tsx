@@ -23,7 +23,10 @@ export default function ResultCard({
   onReplace,
 }: Props) {
   const [swapping, setSwapping] = useState(false);
+  // The longer take, once fetched, is cached here so re-opening is instant.
   const [detail, setDetail] = useState<string | null>(null);
+  // Whether the cached description is currently shown.
+  const [expanded, setExpanded] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,8 +61,9 @@ export default function ResultCard({
   }
 
   async function handleTellMeMore() {
-    if (detail) {
-      setDetail(null); // toggle closed
+    // Already fetched once — just toggle visibility, no second API call.
+    if (detail !== null) {
+      setExpanded((v) => !v);
       return;
     }
     setLoadingMore(true);
@@ -78,6 +82,7 @@ export default function ResultCard({
       if (!res.ok) throw new Error();
       const data = await res.json();
       setDetail(data.detail || "");
+      setExpanded(true);
     } catch {
       setError(copy.errorMessage);
     } finally {
@@ -116,7 +121,7 @@ export default function ResultCard({
           <p className="content-note">{rec.content_note}</p>
         )}
 
-        {detail && <div className="card-more">{detail}</div>}
+        {expanded && detail && <div className="card-more">{detail}</div>}
 
         <div className="card-actions">
           <button
@@ -133,7 +138,7 @@ export default function ResultCard({
           >
             {loadingMore
               ? copy.tellMeMoreLoadingLabel
-              : detail
+              : expanded
               ? "Hide"
               : copy.tellMeMoreLabel}
           </button>
