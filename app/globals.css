@@ -1,0 +1,419 @@
+:root {
+  /* Warm, book-ish palette — cream, ink, a quiet accent. */
+  --bg: #faf6ee;
+  --bg-card: #fffdf8;
+  --ink: #25201a;
+  --ink-soft: #5c5347;
+  --ink-faint: #8a8073;
+  --line: #e6ddcd;
+  --accent: #8a3324; /* deep brick red, like a clothbound spine */
+  --accent-soft: #b07a5f;
+  --placeholder-bg: #efe7d8;
+
+  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: system-ui, -apple-system, sans-serif;
+
+  --radius: 6px;
+  --maxw: 760px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+.page {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 7vh 22px 96px;
+}
+
+@media (min-width: 700px) {
+  .page {
+    padding-top: 12vh;
+  }
+}
+
+/* ---------- Header ---------- */
+.wordmark {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 44px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink);
+}
+
+.subcopy {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-soft);
+  margin: 10px 0 0;
+}
+
+@media (min-width: 700px) {
+  .wordmark {
+    font-size: 56px;
+  }
+  .subcopy {
+    font-size: 19px;
+  }
+}
+
+/* ---------- Emotion grid ---------- */
+.emotions {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 560px) {
+  .emotions {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.chip {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 13px 12px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.chip:hover {
+  border-color: var(--accent-soft);
+}
+
+.chip[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: #fff;
+  color: var(--accent);
+}
+
+/* ---------- Prompt reveal ---------- */
+.prompts {
+  display: grid;
+  gap: 8px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.38s ease, opacity 0.3s ease, margin 0.38s ease;
+}
+
+.prompts.open {
+  max-height: 320px;
+  opacity: 1;
+  margin-top: 14px;
+}
+
+.prompt {
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.prompt:hover {
+  border-color: var(--accent-soft);
+  color: var(--ink);
+  background: var(--bg-card);
+}
+
+/* ---------- Free text input ---------- */
+.tell-link {
+  display: inline-block;
+  margin-top: 26px;
+  font-size: 14px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+
+.tell-link:hover {
+  border-bottom-color: var(--accent);
+}
+
+.input-row {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+@media (min-width: 560px) {
+  .input-row {
+    flex-direction: row;
+  }
+}
+
+.input {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 16px; /* 16px avoids iOS zoom-on-focus */
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 15px;
+  resize: none;
+  min-height: 52px;
+  line-height: 1.4;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.input::placeholder {
+  color: var(--ink-faint);
+}
+
+.submit {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 14px 22px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.18s ease;
+}
+
+.submit:hover {
+  opacity: 0.9;
+}
+
+.submit:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.notice {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+/* ---------- Results ---------- */
+.results-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.results-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.startover {
+  font-size: 14px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-bottom: 1px solid transparent;
+}
+
+.startover:hover {
+  border-bottom-color: var(--accent);
+}
+
+.cards {
+  margin-top: 22px;
+  display: grid;
+  gap: 18px;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  animation: rise 0.4s ease both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card.swapping {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+.cover {
+  width: 92px;
+  height: 138px;
+  object-fit: cover;
+  border-radius: 3px;
+  background: var(--placeholder-bg);
+  border: 1px solid var(--line);
+}
+
+.cover-placeholder {
+  width: 92px;
+  height: 138px;
+  border-radius: 3px;
+  background: var(--placeholder-bg);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 12px;
+  color: var(--ink-faint);
+  padding: 6px;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.card-author {
+  font-size: 14px;
+  color: var(--ink-faint);
+  margin: 3px 0 0;
+}
+
+.card-pitch {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin: 11px 0 0;
+}
+
+.content-note {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  margin: 10px 0 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--line);
+  font-style: italic;
+}
+
+.card-more {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin: 12px 0 0;
+  overflow: hidden;
+  animation: expand 0.36s ease both;
+  white-space: pre-wrap;
+}
+
+@keyframes expand {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 600px;
+  }
+}
+
+.card-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.action {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line);
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+
+.action:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.action:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* full-card pitch when there's no cover column collapse on tiny screens */
+@media (max-width: 380px) {
+  .card {
+    grid-template-columns: 76px 1fr;
+    gap: 13px;
+  }
+  .cover,
+  .cover-placeholder {
+    width: 76px;
+    height: 114px;
+  }
+}
