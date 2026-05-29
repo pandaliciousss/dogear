@@ -361,7 +361,8 @@ body {
   font-size: 15px;
   color: var(--ink-soft);
   margin: 12px 0 0;
-  overflow: hidden;
+  /* No height clamp and no hidden overflow — the full take must always be
+     readable, however long it is. Reveal with a fade + small slide instead. */
   animation: expand 0.36s ease both;
   white-space: pre-wrap;
 }
@@ -369,11 +370,11 @@ body {
 @keyframes expand {
   from {
     opacity: 0;
-    max-height: 0;
+    transform: translateY(-4px);
   }
   to {
     opacity: 1;
-    max-height: 600px;
+    transform: translateY(0);
   }
 }
 
