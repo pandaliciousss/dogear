@@ -61,6 +61,6 @@ export function moreMessage(
     moodContext(emotion, text),
     "",
     `They want to hear more about "${title}" by ${author} — the one you recommended.`,
-    "Give a longer take: what reading it actually feels like, who it's for and who it isn't, and why it fits this mood. Two short paragraphs, no spoilers, no plot summary. Return plain text only — no JSON, no headings.",
+    "Give a longer take: what reading it actually feels like, who it's for and who it isn't, and why it fits this mood. Two short paragraphs, no spoilers, no plot summary. Return plain prose only — no JSON, no headings, no field names, and no 'content_note' line. Just the two paragraphs.",
   ].join("\n");
 }

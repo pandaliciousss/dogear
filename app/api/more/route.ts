@@ -29,6 +29,9 @@ export async function POST(req: NextRequest) {
     const detail = response.content
       .map((b) => (b.type === "text" ? b.text : ""))
       .join("\n")
+      // Belt-and-suspenders: if the model still appends a "content_note:" line
+      // (its system prompt nudges it to), drop it — this call wants pure prose.
+      .replace(/\n+\s*content[_ ]?note\s*:[\s\S]*$/i, "")
       .trim();
 
     return NextResponse.json({ detail });
