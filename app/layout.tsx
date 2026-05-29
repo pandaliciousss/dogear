@@ -1,14 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Inter, Chewy } from "next/font/google";
 import { copy } from "@/config/content";
 import "./globals.css";
 
-// Serif for the wordmark and book titles — warm, literary, small-press.
+// Serif for book titles and small literary touches.
 const fraunces = Fraunces({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-serif",
+  display: "swap",
+});
+
+// Display face for the Dogear wordmark — fat, soft, hand-drawn / bubbly.
+const chewy = Chewy({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-display",
   display: "swap",
 });
 
@@ -36,7 +44,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${chewy.variable} ${inter.variable}`}
+    >
       <body>{children}</body>
     </html>
   );
