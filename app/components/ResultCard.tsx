@@ -43,7 +43,14 @@ export default function ResultCard({
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      onReplace(rec.id, { ...data.recommendation, id: rec.id });
+      // Give the replacement a brand-new id. That changes this card's React
+      // key, so it remounts with clean state — clearing the "swapping" flag and
+      // any open "tell me more" description from the book we just replaced.
+      // (Reusing the old id kept the stale loading flag and locked both buttons.)
+      onReplace(rec.id, {
+        ...data.recommendation,
+        id: `${rec.id}__${Date.now()}`,
+      });
     } catch {
       setError(copy.errorMessage);
       setSwapping(false);
